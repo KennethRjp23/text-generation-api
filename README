@@ -1,0 +1,49 @@
+# Text Generation API
+
+## Objective
+Create a scalable API that uses a Large Language Model (LLM) to generate text based on user input. The infrastructure will be containerized, scalable, and includes CI/CD pipelines, caching, and load balancing.
+
+## Technologies Used
+- **Terraform**: For infrastrucure as code (IaC)
+- **Docker**: For conteainerization
+- **Python**: For backend service
+- **LLM**: Using a pre-trained LLM (like GPT-2 or GPT-3)
+- **NoSQL/Cassandra**: For storing user queries and generated text
+- **Load Balancers**: To distribute incoming requests
+- **Caching**: Using Redis or Mmecached for caching frequent requests
+- **CI/CD**: Using Github Actions or Jenkins
+- **TDD**: Using PyTest for testing Python code
+- **Kafka**: For handling message queues
+- **Kubernetes**: For container ochestration
+
+## Getting Started
+
+### Prerequisites
+- Docker
+- Terrarform
+- Python 3.x
+- Kubernetes
+- NoSQL database (Cassandra)
+- Redis or Memcached 
+- Github Actions or Jenkins for CI/CD
+- Kafka
+- Pytest
+
+### Installation
+1. **Clone the repository:** 
+```sh
+git clone REPO HERE
+```
+
+### Running the Tests
+
+### Deployment 
+
+### Usage
+
+### License
+MIT
+
+
+Feel free to customize the repository link and other specific details to match your actual project setup.
+

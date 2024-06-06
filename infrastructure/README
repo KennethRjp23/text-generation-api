@@ -1,0 +1,118 @@
+# Terraform Configuration for Scalable Text Generation API
+
+## Overview
+This Terraform configuation sets up an EKS (Elastic Kubernetes Service)
+
+## Terraform Configuration
+
+### AWS Provider 
+```hcl
+provider "aws" {
+    region = "us-west-2"
+}
+```
+#### Purpose
+* To specify the cloud provider and the region where resources will be provisioned
+
+#### Benefits
+* Ensures consistend and predictable resource creation
+
+#### Cons
+* Limited to a single cloud provider and region unless additional configurations are made
+
+### EKS Cluster
+```hcl
+resource "aws_eks_cluster" "this" {
+    name = "text-gen-cluster"
+    role_arn = aws_iam_role.eks.arn
+    vpc_config {
+        subnet_ids = ["subnet-12345", "subnet-67890"]
+    }
+}
+```
+
+#### Purpose
+* To deploy a managed Kubernetes cluster, wchich allows for running containerized applications in the cloud
+
+#### Benefits
+* **ManagedService**: AWS EKS handles the control plane (masters), so you don't need to worry about managing Kubernetes masters.
+* **Scalability**: EKS can scale your containerized applications easily by addiong or removing worker nodes.
+* **Integration**: EKS integrates seamlesssly with other AWS services like IAM for secuity, CloudWatch for monitoring, and VPC for networking. 
+* **Reliability**: EKS provides a highly available and secure Kubernetes service
+
+#### Cons
+* **Cost**: EKS is a managed service, and while it saves on operational overhad, it does come with a cost that might be higher to self-managed Kubernetes clusters.
+* **Complexity**: While EKS simplifies many aspects of Kubernetes, settup and managing a production-grade EKS cluster requires a good understanding of AWS service and Kubernetes concepts.
+
+### VPC Configuration
+
+#### Purpose
+* To specify the networking setting for the EKS cluster, inclduing the subnets where the cluster's resources will be deployed.
+
+#### Benefits
+* **Network Isolation**: Using specific subnets can isolate the EKS cluster's network traffic from other parts of your AWS infrastructre.
+* **Customizability**: You can configure the networking to meet your specific needs, such as private subnets for security or public subnets for internet-facing services
+
+#### Cons
+* **Complexity**: Properly configuring VPC settings can be complex and requires a good undersatnding of AWS networking
+
+### IAM Role for EKS
+```hcl
+resource "aws_iam_role" "eks" {
+  name = "eks-role"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "eks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+```
+
+#### Purpose
+* To define a role that grants the EKS cluster the ncessary permissions to interact with other AWS services.
+
+#### Benefits
+* **Security**: By using IAM roles, you can apply the princple of least privilage, granting the EKS cluster only the permissions it needs to operate. 
+* **Management**: IAM roles simplify the management of permissions compared to managing long-term access keys and secrets.
+
+#### Cons
+* **Initial Setup**: Setting up IAM roles and policies correctly can be chalenging and requires a good understanding of AWS IAM
+* **Complexity**: Misconfigured IAM policies can lead to security vulnerabiliites or service disruptions
+
+### Trust Policy
+
+#### Purpose
+* To specify which AWS service (int this case, `eks.amazonaws.con`) is allowed to assume the IAM role
+
+#### Benefit 
+* **Controlled Access**: Ensures that only the specified service can assume the role, enhancing security
+* **Flexibility**: Trust policies can be tailored to allow multiple services or accounts to assume the role if needed
+
+#### Cons
+* **Policy Complexity**: Writing and maintaining trust policies can be complex, especially in environment with multiple interacting services. 
+
+### Summary
+The terraform configuration sets up an EKS cluster with assosciated IAM roles and networking configurations. This setup provides a managed, scalable, and secure environment for running containerized applications. 
+
+#### Tasks Addressed
+* **Scalability**: EKS allows for easy scaling of applications by adding/removing nodes. 
+* **Security**: Using IAM roles and VPC subnets ensures secure operations and network isolation.
+* **Management**: Managed services like EKS reduce the operational overhad of running Kubernetes.
+
+#### Benefits
+* Simplified management and high availability 
+* Seamless integration with other AWS services
+* Enhanced security through IAM roles and policies
+
+#### Cons
+* Higher costs compared to self-managed solutions
+* Initial complexity in setup and configuration 
