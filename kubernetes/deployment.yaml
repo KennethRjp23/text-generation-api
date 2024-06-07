@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: text-gen-api          # Name of the Deployment
+spec:
+  replicas: 3                  # Number of replicas (pods) to create
+  selector:
+    matchLabels:
+      app: text-gen-api      # Select pods with the label 'app: text-gen-api' 
+  template:
+    metadata:
+      labels:
+        app: text-gen-api     # Apply label 'app: text-gen-api' to pods
+    spec:
+      containers:
+      - name: text-gen-api  # Container name
+        image: # Docker image to user for the container
+        ports:
+        - containerPort: 8000 # Port to expose within the container
+        env: # Environment variables for the container
+        - name: REDIS_HOST # Name of the environment variable
+          valueFrom: # Retrieve value from another source (Secret)
+            secretKeyRef:
+              name: redis-secret # Name of the Secret Object
+              key: redis-host # Key within the Secret object for the value
+        - name: CASSANDRA_HOST # Name of the environment variable
+          valueFrom: # Retrieve value from another source (Secret)
+            secretKeyRef:
+              name: cassandra-secret # Name of the Secret Object
+              key: cassandra-host # Key within the Secret object for the value

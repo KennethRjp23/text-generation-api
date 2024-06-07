@@ -1,0 +1,41 @@
+name: CI/CD Pipeline            # Name of the GitHub Actions workflow
+
+on:
+  push:
+    branches:
+      - main                    # Trigger the workflow on push events to the 'main' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest      # Specify the operating system for the job runner
+
+    steps:
+      - uses: actions/checkout@v2 # Check out the code from the repository
+
+      - name: Set up Python
+        uses: actions/setup-python@v2  # Set up Python environment
+        with:
+          python-version: '3.9'   # Specify the Python version to use (3.9)
+
+      - name: Install dependencies
+        run: |                    # Install dependencies
+          python -m pip install --upgrade pip  # Upgrade pip
+          pip install -r app/requirements.txt  # Install Python dependencies from requirements.txt
+
+      - name: Test with pytest
+        run: |                    # Run tests with pytest
+          cd app/src              # Change directory to where the tests are located
+          pytest                  # Run tests using pytest
+
+      - name: Build Docker image
+        run: docker build -t your-docker-image -f app/Dockerfile .  # Build Docker image using the specified Dockerfile
+
+      - name: Push Docker image
+        run: |                    # Push Docker image to Docker registry
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin  # Log in to Docker registry
+          docker push text-generation-docker-image  # Push Docker image to the registry
+
+      - name: Deploy to Kubernetes
+        run: |                    # Deploy application to Kubernetes
+          kubectl apply -f kubernetes/deployment.yaml  # Apply Kubernetes deployment configuration
+          kubectl apply -f kubernetes/service.yaml     # Apply Kubernetes service configuration

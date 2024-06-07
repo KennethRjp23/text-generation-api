@@ -1,0 +1,10 @@
+{
+    "version": "2.0.0",
+    "tasks":[
+        {
+            "label": "fetchDopplerSecrets",
+            "type": "shell",
+            "command": "doppler secrets download --format env --no-file > .env"
+        }
+    ]
+}

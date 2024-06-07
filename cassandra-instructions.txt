@@ -1,0 +1,31 @@
+- Install with Homebrew:
+brew install cassandra
+
+- Start Cassandra Service: 
+cassandra -f
+
+- Verify Cassandra is Running:
+nodetool status
+
+- Open Cassandra Query Language Shell:
+cqlsh
+
+- Create a keyspace and a table:
+CREATE KEYSPACE mykeyspace WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+USE mykeyspace;
+CREATE TABLE mytable (
+    id UUID PRIMARY KEY,
+    data text
+);
+* Replication 
+- Refers to the process of storing multiple copies of data across different nodes (servers) in a Cassandra cluster.
+- Replication ensures high availability and fault tolerance in Cassandra
+- If one node goes down, data can still be retrieved from replicas stored on other nodes
+- It also improves read performance by allowing requests to be served from the nearest replica
+- Simple Strategy: used for single data center deployments or development environments 
+- Network Topology Strategy: used for multi-data center deployments, allowing more control over where replicas are placed
+- Replication Factor determines how many copies (replicas) of each piece of data are stored across the cluster
+- Consistency Level determine how many replicas must respond for the operation to be considered succesful. Higher consistency level requires more replicas to respond,
+  ensuring stronger data consistency but potentially impacting perofmance. 
+
+Note: Keyspace in Cassandra is somewhat analogous to a database schema in relational databases. 

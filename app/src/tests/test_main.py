@@ -19,3 +19,6 @@ def text_generate_text():
     # Send a POST request to the "/generate/" endpoint with a prompt
     response = client.post("/generate/", json={"prompt": "Hello, world"})
     # Assert that the response status code is 200 (OK)
+    assert response.status_code == 200
+    # Asser that the response contains the generated text
+    assert "text" in response.json()
