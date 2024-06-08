@@ -4,6 +4,7 @@ from main import app                      # Import the FastAPI instance from mai
 # Create a TestClient instance to test FastAPI endpoints
 client = TestClient(app)
 
+
 # Define test functions for the API endpoints
 
 # Test the root endpoint "/"
@@ -15,7 +16,7 @@ def test_read_root():
     # Assert that the response JSON matches the expected message
     assert response.json() == {"message": "Welcome to the Text Generation API"}
 
-def text_generate_text():
+def test_generate_text():
     # Send a POST request to the "/generate/" endpoint with a prompt
     response = client.post("/generate/", json={"prompt": "Hello, world"})
     # Assert that the response status code is 200 (OK)
