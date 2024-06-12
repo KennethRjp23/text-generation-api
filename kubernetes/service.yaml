@@ -1,0 +1,12 @@
+apiVersion: v1          # Specifies the API version of the Kubernetes object.
+kind: Service           # Indicates that this configuration is for a Service.
+metadata:
+  name: text-gen-api    # The name of the Service, which can be used to reference it within the cluster.
+spec:
+  selector:             # Defines the criteria used to select the Pods that this Service will route traffic to.
+    app: text-gen-api   # The Pods must have a label "app" with the value "text-gen-api" to be selected by this Service.
+  ports:
+    - protocol: TCP     # The protocol used by the Service. In this case, it's TCP.
+      port: 80          # The port that the Service will expose internally within the cluster.
+      targetPort: 8000  # The port on the Pods that the traffic will be forwarded to. The Pods should have a container listening on this port.
+  type: LoadBalancer    # The type of Service. LoadBalancer exposes the Service externally using a cloud provider's load balancer.

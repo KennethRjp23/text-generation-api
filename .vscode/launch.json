@@ -9,6 +9,8 @@
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
+            "envFile": "{workspaceFolder}/.env",
+            "preLaunchTask": "fetchDopplerSecrets",
             "args": ["app.src.main:app","--reload"],
             "console": "integratedTerminal"
         }
