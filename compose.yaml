@@ -1,44 +1,10 @@
 # Define services
-services:
-  # Redis service
-  redis:
-    image: redis:latest
-    container_name: redis
-    # Expose Redis' default port (9042) to the host machine
-    ports:
-      - "${REDIS_PORT}:6379"
-    healthcheck:   
-      # Command to check if Redis is ready   
-      test: ["CMD", "redis-cli", "ping"]     
-      interval: 30s      
-      timeout: 10s      
-      retries: 3
-  # Cassandra service
-  db:
-    # Use the official Cassandra image from Docker Hub
-    image: cassandra:latest
-    container_name: cassandra
-    # Expose Cassandra's default port (9042) to the host machine
-    ports:
-    - "${CASSANDRA_PORT}:9042"
+version: '3.8'
 
-    # Environment variables for Cassandra
-    environment:
-      CASSANDRA_PASSWORD: "${CASSANDRA_PASS}"
-      CASSANDRA_DB: "${CASSANDRA_DBNAME}"
-    
-    # Mount the keyspace initilaization script into the container
-    volumes:      
-      - ./db/init-keyspace.cql:/docker-entrypoint-initdb.d/init-keyspace.cql
-      - ./db/init-testData.cql:/docker-entrypoint-initdb.d/init-testData.cql
-     
-    # Health check configuration
-    healthcheck:
-       # Command to check if Cassandra is ready
-      test: ["CMD", "cqlsh", "-e", "DESCRIBE KEYSPACES;"]
-      # Check interval
-      interval: 2s
-      # Timeout for each check
-      timeout: 5s
-      # Number of retries before considering the container unhealthy
-      retries: 2
+services:
+  app:    
+    build: app/.    
+    ports:      
+      - "8000:8000"
+    env_file:
+      - .env

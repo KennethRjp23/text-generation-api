@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: text-gen-api          # Name of the Deployment
+  name: text-gen-api  # Name of the Deployment
 spec:
-  replicas: 3                  # Number of replicas (pods) to create
+  replicas: 3  # Number of replicas (pods) to create
   selector:
     matchLabels:
-      app: text-gen-api      # Select pods with the label 'app: text-gen-api' 
+      app: text-gen-api  # Select pods with the label 'app: text-gen-api' 
   template:
     metadata:
       labels:
-        app: text-gen-api     # Apply label 'app: text-gen-api' to pods
+        app: text-gen-api  # Apply label 'app: text-gen-api' to pods
     spec:
       containers:
       - name: text-gen-api  # Container name
-        image: text-gen-api # Docker image to user for the container
-        envfrom:        
-          - configMapRef:           
-            name: text-gen-config
+        image: rejopachikenneth/text-generation-api:latest  # Docker image to use for the container
+        imagePullPolicy: Always  # Always attempt to pull the image on pod startup
+        envFrom:
+        - configMapRef:
+            name: text-gen-config  # Name of the ConfigMap containing environment variables
         ports:
-        - containerPort: 8000 # Port to expose within the container
-      
+        - containerPort: 8000  # Port to expose within the container

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException  # FastAPI for building API endpoints, HHTPException for handling HTTP errors
 from transformers import pipeline           # Pipeline from Hugging Face Transformer library for text generation
+from cassandra.cluster import Cluster       # Cluster from Cassandra driver for connecting to Cassandra database
 from pydantic import BaseModel              # Model to receive request bodies
 from dotenv import load_dotenv              # Load environment variables
 import uuid                                 # Handle UUID 
@@ -17,8 +18,12 @@ class PromptRequest(BaseModel):
 # Initialize text generation pipeline with GPT-2 model
 generator = pipeline('text-generation', model='gpt2')
 
+# Connect to Cassandra Cluster and select keyspace
+cluster = Cluster([os.getenv('CASSANDRA_HOST')]) # Cassandra host(s)
+session = cluster.connect('textgen')  # Connect to 'textgen' keyspace in Cassandra
+
 # Connect to Redis cache
-cache = redis.Redis(host=os.getenv('REDIS_HOST'), port=os.getenv('REDIS_PORT'), password=os.getenv('REDIS_PASSWORD'), db=0)
+cache = redis.Redis(host=os.getenv('REDIS_HOST'), port=6379, db=0)
 
 # Define API endpoint for text generation
 @app.post("/generate/")
@@ -32,7 +37,14 @@ async def generate_text(request:PromptRequest):
     result = generator(request.prompt, max_length=50)[0]['generated_text']
     # Generate a UUID
     newID = uuid.uuid4()
-    
+    # Store generated text in Cassandra database
+    session.execute(
+        """
+        INSERT INTO generated_text (id, prompt, text)
+        VALUES (%s, %s, %s)
+        """, (newID, request.prompt, result)
+    )
+
     # Cache generated text in Redis
     cache.set(request.prompt, result)
 
